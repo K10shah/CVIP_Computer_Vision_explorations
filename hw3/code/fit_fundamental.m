@@ -44,14 +44,21 @@ else
     muy = mean(points1(:,2));
     muxp = mean(points2(:,1));
     muyp = mean(points2(:,2));
+
+    for i=1:size(points1,1)
+        distances1(i) = sqrt((points1(i,1) - mux)^2 + (points1(i, 2) - muy)^2);
+    end
     
-    momentx = max(points1(:,1));
-    momenty = max(points1(:,2));
-    momentxp = max(points2(:,1));
-    momentyp = max(points2(:,2));
+    var1 = sum(distances1)/size(points1,1);
     
-    T_Mat = [1/momentx, 0, -mux/momentx; 0, 1/momenty, -muy/momenty; 0, 0, 1];
-    T_Matp = [1/momentxp, 0, -muxp/momentxp; 0, 1/momentyp, -muyp/momentyp; 0, 0, 1];
+     for i=1:size(points1,1)
+        distances2(i) = sqrt((points2(i,1) - muxp)^2 + (points2(i, 2) - muyp)^2);
+     end
+     
+     varp = sum(distances2)/size(points1,1);
+    
+    T_Mat = [1/var1, 0, -mux/var1; 0, 1/var1, -muy/var1; 0, 0, 1];
+    T_Matp = [1/varp, 0, -muxp/varp; 0, 1/varp, -muyp/varp; 0, 0, 1];
     
     
     points1 = (T_Mat * points1')';
@@ -83,9 +90,47 @@ else
     
     F_Mat = T_Matp'*F_Mat2*T_Mat;
     
-   
+    
 end  %end norm if else
 
+points1 = matches(:, 1:2);
+points1(:,3) = 1;
 
-end  %end function
+points2 = matches(:, 3:4);
+points2(:,3) = 1;
+
+
+AlgDist = 0;
+
+for i = 1:size(points1,1)
+    temp = points2(i,:) * F_Mat * points1(i,:)';
+    temp = temp^2;
+    AlgDist = AlgDist + temp;
+end
+AlgDist = AlgDist / size(points1,1);
+
+lines1 = (F_Mat*points1')';
+lines2 = (F_Mat'*points2')';
+
+GeoDist = 0;
+for i = 1:size(points1,1)
+    a = lines1(i,1);
+    b = lines1(i,2);
+    c = lines1(i,3);
+    ap = lines2(i,1);
+    bp = lines2(i,2);
+    cp = lines2(i,3);
+    dist1 = (abs(ap*points1(i,1) + bp*points1(i,2) + cp))/sqrt(ap^2 + bp^2);
+    dist2 = (abs(a*points2(i,1) + b*points2(i,2) + c))/sqrt(a^2 + b^2);
+    
+    GeoDist = GeoDist + (dist1^2 + dist2^2);
+end
+
+GeoDist = GeoDist/size(points1, 1);
+
+str = sprintf('Dist 1 %f', AlgDist);
+disp(str);
+str = sprintf('Dist 2 %f', GeoDist);
+disp(str);
+end
 

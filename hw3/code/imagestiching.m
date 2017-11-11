@@ -1,18 +1,18 @@
 clear all
 close all
 clc;
-img1 = im2double(imread('4.jpg'));
+img1 = im2double(imread('..\data\part1\hill\2.jpg'));
 img2 = im2double(imread('..\data\part1\hill\3.jpg'));
 
+%converting to grayscale
 img1gray = rgb2gray(img1);
 img2gray = rgb2gray(img2);
 
-
-
-%imshow(img1gray);
+%applying harris detector for finding corners
 [cim1, r1, c1] = harris(img1gray, 2, 0.05, 2, 1);
 [cim2, r2, c2] = harris(img2gray, 2, 0.05, 2, 1);
 
+%calculating rows and cols for later use
 img1rows = size(img1gray, 1);
 img1cols = size(img1gray, 2);
 img2rows = size(img2gray, 1);
