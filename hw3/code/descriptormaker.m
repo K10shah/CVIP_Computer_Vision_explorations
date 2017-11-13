@@ -1,6 +1,17 @@
 function [ desc, points] = descriptormaker( img, r, c)
-%DESCRIPTORMAKER Summary of this function goes here
-%   Detailed explanation goes here
+%DESCRIPTORMAKER :
+%   This function taken the coordinates of keypoints of an image and extracts their
+%   neighbourhoods and flattens them into vectors
+%   Arguements: 
+%        img - the image of which key points are detected
+%        r - row values of the key points
+%        c - column values of key points
+%   
+%   Returns:
+%        desc - the flattened neighbourhoods of the keypoints
+%        points - x,y coordinate in 2-D space of the keypoints
+
+
 k = 1;
 imgrows = size(img, 1);
 imgcols = size(img, 2);

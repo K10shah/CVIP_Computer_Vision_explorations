@@ -1,8 +1,7 @@
-clear all
-close all
-clc;
-img1 = im2double(imread('..\data\part1\pier\1.jpg'));
-img2 = im2double(imread('..\data\part1\pier\2.jpg'));
+function [impath] = imagestitching( img1path, img2path)
+
+img1 = im2double(imread(img1path));
+img2 = im2double(imread(img2path));
 
 %converting to grayscale
 img1gray = rgb2gray(img1);
@@ -92,6 +91,10 @@ for N = 1:10000
     
 end
 
+inliers = find(Bestdistarray < threshold);
+feadesc1 = feadesc1(inliers, :);
+feadesc2 = feadesc2(inliers, :);
+
 inputCorners = [];
 inputCorners(1,:) = [1, 1];
 inputCorners(2,:) = [1 , img1rows];
@@ -169,7 +172,7 @@ elseif(ylower > 1)
     img1 = img1canvas;
     img1rows = size(img1, 1);
 end
- 
+
 img1rows = size(img1, 1);
 img1cols = size(img1, 2);
 img2rows = size(img2, 1);
@@ -207,3 +210,6 @@ finalcanvas(overlap) = finalcanvas(overlap)/2;
 figure;
 imshow(finalcanvas);
 imwrite(finalcanvas, '4.jpg');
+impath = '4.jpg';
+
+end

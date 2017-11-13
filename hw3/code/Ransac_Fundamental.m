@@ -89,9 +89,46 @@ for N=1:1000
     end
 end
 
+points1 = feadesc1;
+points2 = feadesc2;
+
 inliers = find(Bestdistarray < threshold);
 feadesc1 = feadesc1(inliers, :);
 feadesc2 = feadesc2(inliers, :);
+
+AlgDist = 0;
+
+for i = 1:size(points1,1)
+    temp = points2(i,:) * BestF * points1(i,:)';
+    temp = temp^2;
+    AlgDist = AlgDist + temp;
+end
+
+AlgDist = AlgDist / size(points1,1);
+
+lines1 = (BestF*points1')';
+lines2 = (BestF'*points2')';
+
+GeoDist = 0;
+for i = 1:size(points1,1)
+    a = lines1(i,1);
+    b = lines1(i,2);
+    c = lines1(i,3);
+    ap = lines2(i,1);
+    bp = lines2(i,2);
+    cp = lines2(i,3);
+    dist1 = (abs(ap*points1(i,1) + bp*points1(i,2) + cp))/sqrt(ap^2 + bp^2);
+    dist2 = (abs(a*points2(i,1) + b*points2(i,2) + c))/sqrt(a^2 + b^2);
+    
+    GeoDist = GeoDist + (dist1^2 + dist2^2);
+end
+
+GeoDist = GeoDist/size(points1, 1);
+
+str = sprintf('Dist 1 %f', AlgDist);
+disp(str);
+str = sprintf('Dist 2 %f', GeoDist);
+disp(str);
 
 L = (BestF * feadesc1')'; % transform points from 
 % the first image to get epipolar lines in the second image
